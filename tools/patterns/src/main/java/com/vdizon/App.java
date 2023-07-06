@@ -2,6 +2,7 @@ package com.vdizon;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Scanner;
 
 import com.vdizon.fileAnalysis.BEDFile;
 import com.vdizon.fileAnalysis.CSVBuilder;
@@ -16,11 +17,13 @@ public class App {
             bedFileDirectory = args[0];
             outputDirectory = args[1];
         } else {
+            Scanner inputReader = new Scanner(System.in);
             System.out.println("Please enter the directory of the BED file");
-            bedFileDirectory = System.console().readLine();
+            bedFileDirectory = inputReader.nextLine();
 
             System.out.println("Please enter the desired directory of the output CSV file");
-            outputDirectory = System.console().readLine();
+            outputDirectory = inputReader.nextLine();
+            inputReader.close();
         }
 
         BEDFile bedFile;
