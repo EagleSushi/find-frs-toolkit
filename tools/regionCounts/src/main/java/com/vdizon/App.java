@@ -1,6 +1,8 @@
 package com.vdizon;
 
 import java.io.IOException;
+import java.util.Scanner;
+
 import com.vdizon.dataProcessing.RegionCounter;
 import com.vdizon.utils.Timer;
 
@@ -11,10 +13,12 @@ public class App {
         String csvFileDirectory;
 
         if (args.length != 2) {
+            Scanner inputReader = new Scanner(System.in);
             System.out.println("Please enter the directory of the BED file: ");
-            bedFileDirectory = System.console().readLine();
+            bedFileDirectory = inputReader.nextLine();
             System.out.println("Please enter the directory of the CSV file: (Doesn't have to end with .csv) ");
-            csvFileDirectory = System.console().readLine();
+            csvFileDirectory = inputReader.nextLine();
+            inputReader.close();
         } else {
             bedFileDirectory = args[0];
             csvFileDirectory = args[1];
@@ -36,7 +40,6 @@ public class App {
             e.printStackTrace();
         }
 
-        long endTime = System.currentTimeMillis();
         System.out.println("Time taken: " + Timer.stop() + "ms");
 
     }
