@@ -12,6 +12,12 @@ Find FRs Toolkit is a combination of java programs used to analyze .bed files. A
 3. Execute ```$ java -jar <desired .jar file>```
 4. Follow the prompts
 
+## Sample Data
+
+The sample outputs are linked in each of the respective title for each program description.
+
+[Sample data used](https://github.com/vfdizon/find-frs-toolkit/tree/master/sample/data)
+
 ---
 
 ### [findfrs.combinations.regions.count.jar (link to output)](https://github.com/vfdizon/find-frs-toolkit/blob/master/sample/output/findfrs.combinations.regions.count.csv)
