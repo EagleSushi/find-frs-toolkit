@@ -1,6 +1,7 @@
 package com.vdizon;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 
 import com.vdizon.fileAnalysis.BEDAnalyzer;
@@ -16,15 +17,21 @@ public class App {
         System.out.println("Please enter the directory of all of the annotations (.gff3) files");
         String annotationsDirectory = inputReader.nextLine();
 
+        System.out.println("Please enter the output directory for the CSV file");
+        String outputDirectory = inputReader.nextLine();
+
         inputReader.close();
         Timer.start();
 
         System.out.println("Analyzing .bed file...");
         try {
-            BEDAnalyzer bedAnalyzer = new BEDAnalyzer(bedFilePath, annotationsDirectory);
+            BEDAnalyzer bedAnalyzer = new BEDAnalyzer(bedFilePath, annotationsDirectory, outputDirectory);
+            bedAnalyzer.exportToCSV();
         } catch (FileNotFoundException e) {
             System.out.println("File not found.");
             e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Error creating CSV output file.");
         }
 
         System.out.println("Finished in " + Timer.stop() + " milliseconds.");

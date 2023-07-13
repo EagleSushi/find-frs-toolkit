@@ -2,24 +2,37 @@ package com.vdizon.fileAnalysis;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class BEDAnalyzer {
-    private HashMap<String, String> mRespectiveAnnotations;
-    private ArrayList<String> mAnnotationsWithinRange;
+import com.vdizon.utils.Timer;
 
-    public BEDAnalyzer(String bedFilePath, String annotationsDirectory) throws FileNotFoundException {
+public class BEDAnalyzer {
+    private HashMap<String, Annotation> mRespectiveAnnotations;
+    private ArrayList<String> mAnnotationsWithinRange;
+    public CSVBuilder mCSVBuilder;
+
+    public BEDAnalyzer(String bedFilePath, String annotationsDirectory, String outputDirectory) throws FileNotFoundException, IOException {
         mRespectiveAnnotations = new HashMap<>();
         mAnnotationsWithinRange = new ArrayList<>();
+        mCSVBuilder = new CSVBuilder(outputDirectory);
         storeAnnotationFiles(annotationsDirectory);
+        long analyzeStartTime = Timer.stop();
         analyzeBEDFile(bedFilePath);
+        System.out.println("Finished analyzing .bed file in: " + (Timer.stop() - analyzeStartTime) + "ms");
+    }
 
+    public void exportToCSV() throws IOException {
+       for(String annotationWithinRange : mAnnotationsWithinRange) {
+           mCSVBuilder.writeRow(annotationWithinRange);
+       }
+       mCSVBuilder.build();
     }
 
     // Store all of the annotation files in a HashMap, which returns
-    private void storeAnnotationFiles(String annotationsDirectory) {
+    private void storeAnnotationFiles(String annotationsDirectory) throws FileNotFoundException{
         File annotations = new File(annotationsDirectory);
         File[] annotationsFiles = annotations.listFiles();
 
@@ -32,8 +45,10 @@ public class BEDAnalyzer {
             String[] parsedFileName = annotationFileName.split("\\.");
             String annotationName = parsedFileName[0] + "." + parsedFileName[1];
             System.out.println("Annotation found: " + annotationName);
-            mRespectiveAnnotations.put(annotationName, annotationFile.getAbsolutePath());
+            mRespectiveAnnotations.put(annotationName, new Annotation(annotationName, annotationFile.getAbsolutePath()));
         }
+
+        System.out.println("Finished parsing annotation files in: " + Timer.stop() + "ms");
     }
 
     private void analyzeBEDFile(String bedFilePath) throws FileNotFoundException {
@@ -44,7 +59,6 @@ public class BEDAnalyzer {
             String line = bedFileReader.nextLine();
 
             String[] parsedLine;
-
 
             String[] parsed_name;
             String annotationName;
@@ -64,40 +78,14 @@ public class BEDAnalyzer {
 
             int start = Integer.parseInt(parsedLine[1]);
             int end = Integer.parseInt(parsedLine[2]);
-            String annotationFileName = mRespectiveAnnotations.get(annotationName);
-
-            if (isWithinRange(start, end, annotationFileName)) {
-                // System.out.println("Line: " + line + annotationName);
-                mAnnotationsWithinRange.add(line + "\t" + annotationName);
+            Annotation annotation = mRespectiveAnnotations.get(annotationName);
+            String annotationLine = annotation.withinRangeLine(start, end);
+            if (annotationLine != null) {
+                mAnnotationsWithinRange.add(line.replace("\t", ",") + "," + annotationLine.replace("\t", ","));
             }
         }
 
         bedFileReader.close();
-    }
-
-    private boolean isWithinRange(int start, int end, String annotationFileName) throws FileNotFoundException {
-        File annotationFile = new File(annotationFileName);
-        Scanner annotationFileReader = new Scanner(annotationFile);
-        while (annotationFileReader.hasNextLine()) {
-            String line = annotationFileReader.nextLine();
-            if (line.startsWith("#")) {
-                continue;
-            }
-            String[] parsedLine = line.split("\t");
-
-            int annotationStart = Integer.parseInt(parsedLine[3]);
-            int annotationEnd = Integer.parseInt(parsedLine[4]);
-
-            if (start >= annotationStart && end <= annotationEnd) {
-                annotationFileReader.close();
-                System.out.println(start + " " + end + " :: " + line );
-                return true;
-            }
-        }
-
-        annotationFileReader.close();
-
-        return false;
     }
 
 }
