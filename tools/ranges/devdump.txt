@@ -1,2 +1,0 @@
-currenttime=51574ms
-parseTime=1736ms
