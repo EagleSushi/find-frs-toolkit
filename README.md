@@ -33,3 +33,7 @@ Find FRs Toolkit is a combination of java programs used to analyze .bed files. A
 > One csv file reveals the different regions present in the .bed file and their count
 > Another csv file reveals the variants (subregions) present in the .bed file
 > The last csv file reveals the count of the different variants (subregions) in the .bed file
+
+### findfrs.ranges.jar
+> This searches the given directory for .gff3 files, which are annotations for a bed file
+> This then concatenates the .bed file line and the line in the .gff3 file together in one line of the .csv output, if the start and end location are within any range in the .gff3 file
