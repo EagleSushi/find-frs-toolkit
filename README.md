@@ -3,7 +3,7 @@
 
 ## Description
 
-Find FRs Toolkit is a combination of java programs used to analyze .bed files. All of the programs output to a .csv file format. 
+Find FRs Toolkit is a combination of programs used to analyze .bed files. All of the programs output to a .csv file format. 
 
 ## Usage
 
