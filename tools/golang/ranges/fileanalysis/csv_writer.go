@@ -7,22 +7,57 @@ import (
 )
 
 type CSVWriter struct {
-	FileName string
+	FileName     string
+	csvFile      *os.File
+	writer       *bufio.Writer
+	batchSize    int
+	writeBatch   []string
+	numOfBatches int
 }
 
-func (csvWriter *CSVWriter) WriteLines(header string, lines []string) {
+func (csvWriter *CSVWriter) CreateFile(header string) {
+	csvWriter.batchSize = 1e6
+	csvWriter.numOfBatches = 0
 	file, createError := os.Create(csvWriter.FileName)
 
 	check(createError)
-	defer file.Close()
 
-	writer := bufio.NewWriter(file)
-	defer writer.Flush()
+	csvWriter.writer = bufio.NewWriter(file)
 
-	writer.WriteString(header)
-	for _, line := range lines {
-		writer.WriteString("\n" + line)
+	csvWriter.WriteLine(header)
+
+	fmt.Println("Created", csvWriter.FileName)
+	fmt.Print("\n")
+	fmt.Println("Writing to", csvWriter.FileName, "concurrently with a batch size of", csvWriter.batchSize, "lines each")
+	fmt.Print("\n")
+}
+
+func (csvWriter *CSVWriter) WriteLine(line string) {
+	csvWriter.writeBatch = append(csvWriter.writeBatch, line)
+	if len(csvWriter.writeBatch) >= csvWriter.batchSize {
+		csvWriter.flushBatch()
 	}
+}
 
-	fmt.Println("Wrote to", csvWriter.FileName)
+func (csvWriter *CSVWriter) flushBatch() {
+	for _, batchLine := range csvWriter.writeBatch {
+		_, err := csvWriter.writer.WriteString(batchLine + "\n")
+		if err != nil {
+			fmt.Println("Error writing line to file:", err)
+			return
+		}
+	}
+	csvWriter.numOfBatches++
+	fmt.Println("Wrote batch", csvWriter.numOfBatches, "to file")
+	csvWriter.writer.Flush()
+	csvWriter.csvFile.Sync()
+	csvWriter.writeBatch = []string{}
+
+}
+
+func (csvWriter *CSVWriter) Close() {
+	fmt.Println("Finished analysis, flushing remaining batch lines")
+	csvWriter.flushBatch()
+	csvWriter.csvFile.Close()
+	fmt.Println("Closed", csvWriter.FileName)
 }

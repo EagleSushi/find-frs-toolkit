@@ -9,36 +9,37 @@ import (
 )
 
 type AnnotationAnalyzer struct {
-	Annotations      *Annotations
-	BedFile          *BEDFile
-	linesWithinRange []string
+	Annotations *Annotations
+	BedFile     *BEDFile
+	CSVWriter   *CSVWriter
 }
 
 func (annotationAnalyzer *AnnotationAnalyzer) Analyze() {
-	annotationAnalyzer.linesWithinRange = []string{}
 	startTime := time.Now()
-
+	annotationAnalyzer.CSVWriter.CreateFile("")
 	var waitGroup sync.WaitGroup
 	waitGroup.Add(len(annotationAnalyzer.Annotations.AnnotationFileFromName))
-	channel := make(chan string)
+	writeChannel := make(chan string)
 
 	for name := range annotationAnalyzer.Annotations.AnnotationFileFromName {
-		go annotationAnalyzer.checkForBEDFileEntries(channel, &waitGroup, name)
+		go annotationAnalyzer.checkForBEDFileEntries(writeChannel, &waitGroup, name)
 	}
 
 	go func() {
-		for line := range channel {
-			annotationAnalyzer.linesWithinRange = append(annotationAnalyzer.linesWithinRange, line)
+		for line := range writeChannel {
+			annotationAnalyzer.CSVWriter.WriteLine(line)
 		}
 	}()
 
 	waitGroup.Wait()
-	close(channel)
+	close(writeChannel)
 
 	fmt.Println("Analyzed in", time.Since(startTime))
+
+	annotationAnalyzer.CSVWriter.Close()
 }
 
-func (annotationAnalyzer *AnnotationAnalyzer) checkForBEDFileEntries(channel chan string, waitGroup *sync.WaitGroup, name string) {
+func (annotationAnalyzer *AnnotationAnalyzer) checkForBEDFileEntries(writeChannel chan string, waitGroup *sync.WaitGroup, name string) {
 	startTime := time.Now()
 
 	defer waitGroup.Done()
@@ -71,7 +72,8 @@ func (annotationAnalyzer *AnnotationAnalyzer) checkForBEDFileEntries(channel cha
 			}
 
 			if start >= annotationStart && end <= annotationEnd {
-				channel <- strings.Replace(line+"\t"+annotationLine, "\t", ",", -1)
+				outString := strings.Replace(line+"\t"+annotationLine, "\t", ",", -1)
+				writeChannel <- outString
 			}
 		}
 
@@ -79,12 +81,4 @@ func (annotationAnalyzer *AnnotationAnalyzer) checkForBEDFileEntries(channel cha
 
 	fmt.Println("[goroutine] checkingForBEDfile done for", name, "in", time.Since(startTime))
 
-}
-
-func (annotationAnalyzer *AnnotationAnalyzer) ExportToCSV(csvPath string) {
-	csvWriter := CSVWriter{
-		FileName: csvPath,
-	}
-
-	csvWriter.WriteLines("", annotationAnalyzer.linesWithinRange)
 }

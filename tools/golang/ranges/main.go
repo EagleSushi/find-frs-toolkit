@@ -38,13 +38,16 @@ func main() {
 	go bedFile.ReadLines(&waitGroup)
 
 	waitGroup.Wait()
+	csvWriter := fileanalysis.CSVWriter{
+		FileName: outputFilePath,
+	}
 
 	annotationAnalyzer := fileanalysis.AnnotationAnalyzer{
 		Annotations: &annotations,
+		CSVWriter:   &csvWriter,
 		BedFile:     &bedFile,
 	}
 
 	annotationAnalyzer.Analyze()
-	annotationAnalyzer.ExportToCSV(outputFilePath)
 
 }
