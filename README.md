@@ -9,7 +9,7 @@ Find FRs Toolkit is a combination of programs used to analyze .bed files. All of
 
 1. Download/clone repository
 2. Navigate to the \out\ directory
-3. Execute ```$ java -jar <desired .jar file>```
+3. Execute ```$ java -jar <desired .jar file>``` or ```$ ./<desired .exe/.linux64 file>```
 4. Follow the prompts
 
 ## Sample Data
@@ -134,11 +134,13 @@ Wrote to CSV: ..\sample\output\findfrs.regioncounts_regionVariantCounts.csv
 Time taken: 497ms
 ```
 
-### [findfrs.ranges.jar (link to output)](https://github.com/vfdizon/find-frs-toolkit/blob/master/sample/output/findfrs.ranges.csv)
+### [findfrs.ranges.jar & findfrs.ranges.exe (Windows) & findfrs.ranges.linux64 (Linux 64) (link to output)](https://github.com/vfdizon/find-frs-toolkit/blob/master/sample/output/findfrs.ranges.csv)
 > This searches the given directory for .gff3 files, which are annotations for a bed file
 > This then concatenates the .bed file line and the line in the .gff3 file together in one line of the .csv output, if the start and end location are within any range in the .gff3 file
+> The .jar file is written in java, and the .exe/./linux64 executables are written in golang.
+> The java version is better suited for smaller datasets, while the golang version is better for larger datasets, and utilizes concurrency to search the .bed file for each .gff3 file. 
 
-Example usage:
+Example usage (.jar):
 ```
 $ java -jar findfrs.ranges.jar
 Please enter .bed file path:
@@ -157,3 +159,31 @@ Finished analyzing .bed file in: 2390ms
 Wrote to CSV: ..\sample\output\findfrs.ranges.csv
 Finished in 5901 milliseconds.
 ```
+
+```
+$ .\findfrs.ranges.exe
+Please enter the .BED file path:
+..\sample\data\sampleData.bed
+Please enter the directory path for the .gff3 files:
+..\sample\data
+Please enter the output file path: ( ending in .csv)
+..\sample\output\findfrs.ranges.csv
+[goroutine] ReadLines starting
+
+[goroutine] AddAllAnnotations starting
+
+Read BED File in 34.0068ms
+[goroutine] ReadLines done
+Read Annotation File: ..\sample\data\medtr.HM004.gnm1.ann1.2XTB.gene_models_main.gff3 in 487.0276ms
+Read Annotation File: ..\data\medtr.HM010.gnm1.ann1.WV9J.gene_models_main.gff3 in 483.6758ms
+[goroutine] AddAllAnnotations done
+[goroutine] checkingForBEDfile entries for medtr.HM004
+[goroutine] checkingForBEDfile entries for medtr.HM010
+[goroutine] checkingForBEDfile done for medtr.HM004 in 52.1685298s
+[goroutine] checkingForBEDfile done for medtr.HM010 in 1m5.5280259s
+Analyzed in 1m5.5280259s
+Wrote to ..\sample\output\findfrs.ranges.csv
+```
+
+---
+
