@@ -1,14 +1,31 @@
 package main
 
 import (
-	"github.com/vfdizon/bedReader/file_analysis"
+	"sync"
+
+	"github.com/vfdizon/bedReader/fileanalysis"
 )
 
 func main() {
-	bedFile := file_analysis.BEDFile{
+	annotations := fileanalysis.Annotations{
+		Directory: "C:\\Users\\Vincent Dizon\\Documents\\Github Repositories\\find-frs-toolkit\\sample\\data",
+	}
+	bedFile := fileanalysis.BEDFile{
 		FileName: "C:\\Users\\Vincent Dizon\\Documents\\Github Repositories\\find-frs-toolkit\\sample\\data\\sampleData.bed",
 	}
+	var waitGroup sync.WaitGroup
+	waitGroup.Add(2)
 
-	bedFile.ReadLines()
-	bedFile.PrintLines()
+	go annotations.AddAllAnnotations(&waitGroup)
+	go bedFile.ReadLines(&waitGroup)
+
+	waitGroup.Wait()
+
+	annotationAnalyzer := fileanalysis.AnnotationAnalyzer{
+		Annotations: &annotations,
+		BedFile:     &bedFile,
+	}
+
+	annotationAnalyzer.Analyze()
+
 }
