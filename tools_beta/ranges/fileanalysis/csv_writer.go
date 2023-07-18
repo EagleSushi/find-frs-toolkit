@@ -16,7 +16,7 @@ type CSVWriter struct {
 }
 
 func (csvWriter *CSVWriter) CreateFile(header string) {
-	csvWriter.batchSize = 1e6
+	csvWriter.batchSize = 1e5
 	csvWriter.numOfBatches = 0
 	file, createError := os.Create(csvWriter.FileName)
 

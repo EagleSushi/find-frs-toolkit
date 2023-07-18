@@ -53,6 +53,7 @@ func (annotationAnalyzer *AnnotationAnalyzer) checkForBEDFileEntries(writeChanne
 		}
 
 		parsedLine := strings.Split(line, "\t")
+		genomeName := parsedLine[0]
 		start, startError := strconv.Atoi(parsedLine[1])
 		end, endError := strconv.Atoi(parsedLine[2])
 
@@ -61,10 +62,16 @@ func (annotationAnalyzer *AnnotationAnalyzer) checkForBEDFileEntries(writeChanne
 			continue
 		}
 
-		for annotationStartEnd, annotationLine := range respectiveAnnotation.LinesSet {
-			parsedAnnotationStartEnd := strings.Split(annotationStartEnd, "\t")
-			annotationStart, annotationStartError := strconv.Atoi(parsedAnnotationStartEnd[0])
-			annotationEnd, annotationEndError := strconv.Atoi(parsedAnnotationStartEnd[1])
+		for annotationLine := range respectiveAnnotation.LinesSet {
+			parsedAnnotationStartEnd := strings.Split(annotationLine, "\t")
+			annotationName := parsedAnnotationStartEnd[0]
+
+			if annotationName != genomeName {
+				continue
+			}
+
+			annotationStart, annotationStartError := strconv.Atoi(parsedAnnotationStartEnd[3])
+			annotationEnd, annotationEndError := strconv.Atoi(parsedAnnotationStartEnd[4])
 
 			if annotationStartError != nil || annotationEndError != nil {
 				fmt.Println("Error converting annotation start or end to int. Start:", annotationStart, "End:", annotationEnd)

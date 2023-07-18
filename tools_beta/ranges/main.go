@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+
 	inputReader := bufio.NewReader(os.Stdin)
 
 	fmt.Println("Please enter the .BED file path:")

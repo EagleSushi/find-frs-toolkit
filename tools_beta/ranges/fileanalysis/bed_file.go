@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 	"sync"
 	"time"
 )
@@ -35,11 +34,7 @@ func (bedFile *BEDFile) ReadLines(waitGroup *sync.WaitGroup) error {
 	fileScanner := bufio.NewScanner(file)
 	fileScanner.Split(bufio.ScanLines)
 	for fileScanner.Scan() {
-		parsedLine := strings.Split(fileScanner.Text(), "\t")
-		name := parsedLine[0]
-		start := parsedLine[1]
-		end := parsedLine[2]
-		bedFile.Lines = append(bedFile.Lines, name+"\t"+start+"\t"+end)
+		bedFile.Lines = append(bedFile.Lines, fileScanner.Text())
 	}
 
 	fmt.Println("Read BED File in", time.Since(start))

@@ -10,7 +10,7 @@ import (
 )
 
 type AnnotationFile struct {
-	LinesSet map[string]string
+	LinesSet map[string]bool
 	FileName string
 }
 
@@ -18,7 +18,7 @@ func (annotationFile *AnnotationFile) ReadLines() error {
 	if annotationFile.FileName == "" {
 		return errors.New("no annotation file specified")
 	}
-	annotationFile.LinesSet = make(map[string]string)
+	annotationFile.LinesSet = make(map[string]bool)
 	startTime := time.Now()
 	file, err := os.Open(annotationFile.FileName)
 	check(err)
@@ -31,10 +31,7 @@ func (annotationFile *AnnotationFile) ReadLines() error {
 		if strings.HasPrefix(currentLine, "#") {
 			continue
 		} else {
-			parsedLine := strings.Split(currentLine, "\t")
-
-			startEnd := parsedLine[3] + "\t" + parsedLine[4]
-			annotationFile.addAnnotationIfDoesntExist(currentLine, startEnd)
+			annotationFile.addAnnotationIfDoesntExist(currentLine)
 		}
 	}
 	file.Close()
@@ -43,14 +40,6 @@ func (annotationFile *AnnotationFile) ReadLines() error {
 	return nil
 }
 
-func (annotationFile *AnnotationFile) addAnnotationIfDoesntExist(line, startEnd string) bool {
-	_, contains := annotationFile.LinesSet[startEnd]
-
-	if !contains {
-		annotationFile.LinesSet[startEnd] = line
-		return false
-	}
-
-	return true
-
+func (annotationFile *AnnotationFile) addAnnotationIfDoesntExist(line string) {
+	annotationFile.LinesSet[line] = true
 }
