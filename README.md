@@ -138,7 +138,8 @@ Time taken: 497ms
 > This searches the given directory for .gff3 files, which are annotations for a bed file
 > This then concatenates the .bed file line and the line in the .gff3 file together in one line of the .csv output, if the start and end location are within any range in the .gff3 file
 > The .jar file is written in java, and the .exe/./linux64 executables are written in golang.
-> The java version is better suited for smaller datasets, while the golang version is better for larger datasets, and utilizes concurrency to search the .bed file for each .gff3 file. 
+> The java version is better suited for smaller datasets, while the golang version is better for larger datasets, and utilizes concurrency to search the .bed file for each .gff3 file.
+> The golang version also writes to the .csv file in batches as the program is running.
 
 Example usage (.jar):
 ```
@@ -159,9 +160,9 @@ Finished analyzing .bed file in: 2390ms
 Wrote to CSV: ..\sample\output\findfrs.ranges.csv
 Finished in 5901 milliseconds.
 ```
-
+Example usage (.exe/linux64):
 ```
-$ .\findfrs.ranges.exe
+λ .\findfrs.ranges.exe
 Please enter the .BED file path:
 ..\sample\data\sampleData.bed
 Please enter the directory path for the .gff3 files:
@@ -172,17 +173,23 @@ Please enter the output file path: ( ending in .csv)
 
 [goroutine] AddAllAnnotations starting
 
-Read BED File in 34.0068ms
+Read BED File in 35.3038ms
 [goroutine] ReadLines done
-Read Annotation File: ..\sample\data\medtr.HM004.gnm1.ann1.2XTB.gene_models_main.gff3 in 487.0276ms
-Read Annotation File: ..\data\medtr.HM010.gnm1.ann1.WV9J.gene_models_main.gff3 in 483.6758ms
+Read Annotation File: ..\sample\data\medtr.HM004.gnm1.ann1.2XTB.gene_models_main.gff3 in 488.7441ms
+Read Annotation File: ..\sample\data\medtr.HM010.gnm1.ann1.WV9J.gene_models_main.gff3 in 496.9368ms
 [goroutine] AddAllAnnotations done
-[goroutine] checkingForBEDfile entries for medtr.HM004
+Created..\sample\output\findfrs.ranges.csv
+
+Writing to ..\sample\output\findfrs.ranges.csv concurrently with a batch size of 1000000 lines each
+
 [goroutine] checkingForBEDfile entries for medtr.HM010
-[goroutine] checkingForBEDfile done for medtr.HM004 in 52.1685298s
-[goroutine] checkingForBEDfile done for medtr.HM010 in 1m5.5280259s
-Analyzed in 1m5.5280259s
-Wrote to ..\sample\output\findfrs.ranges.csv
+[goroutine] checkingForBEDfile entries for medtr.HM004
+[goroutine] checkingForBEDfile done for medtr.HM004 in 54.0884893s
+[goroutine] checkingForBEDfile done for medtr.HM010 in 1m7.9875196s
+Analyzed in 1m7.9943434s
+Finished analysis, flushing remaining batch lines
+Wrote batch 1 to file
+Closed ..\sample\output\findfrs.ranges.csv
 ```
 
 ---
