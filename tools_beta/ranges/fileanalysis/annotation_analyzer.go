@@ -36,15 +36,12 @@ func (annotationAnalyzer *AnnotationAnalyzer) Analyze() {
 	close(channel)
 
 	fmt.Println("Analyzed in", time.Since(startTime))
-
-	// for line := range annotationAnalyzer.linesWithinRange {
-	// 	// fmt.Println(line)
-	// }
 }
 
 func (annotationAnalyzer *AnnotationAnalyzer) checkForBEDFileEntries(channel chan string, waitGroup *sync.WaitGroup, name string) {
+	startTime := time.Now()
+
 	defer waitGroup.Done()
-	defer fmt.Println("[goroutine] checkingForBEDfile done for", name)
 
 	fmt.Println("[goroutine] checkingForBEDfile entries for", name)
 
@@ -79,4 +76,15 @@ func (annotationAnalyzer *AnnotationAnalyzer) checkForBEDFileEntries(channel cha
 		}
 
 	}
+
+	fmt.Println("[goroutine] checkingForBEDfile done for", name, "in", time.Since(startTime))
+
+}
+
+func (annotationAnalyzer *AnnotationAnalyzer) ExportToCSV(csvPath string) {
+	csvWriter := CSVWriter{
+		FileName: csvPath,
+	}
+
+	csvWriter.WriteLines("", annotationAnalyzer.linesWithinRange)
 }
