@@ -3,7 +3,14 @@
 
 ## Description
 
-Find FRs Toolkit is a combination of programs used to analyze .bed files. All of the programs output to a .csv file format. You must have golang installed to run .exe/.linux64 programs, and you must have java in order to run .jar files. 
+Find FRs Toolkit is a combination of programs used to analyze .bed files. All of the programs output to a .csv file format.
+
+## Prerequisties 
+
+- Java to run .jar files
+- Go to run .exe/.linux64 files <br />
+[Java installation](https://www.java.com/en/download/help/download_options.html) <br />
+[Go installation](https://go.dev/doc/install) <br />
 
 ## Usage
 
@@ -162,7 +169,7 @@ Finished in 5901 milliseconds.
 ```
 Example usage (.exe/linux64):
 ```
-λ .\findfrs.ranges.exe
+$ .\findfrs.ranges.exe
 Please enter the .BED file path:
 ..\sample\data\sampleData.bed
 Please enter the directory path for the .gff3 files:
