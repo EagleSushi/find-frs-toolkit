@@ -28,8 +28,8 @@ The sample outputs are linked in each of the respective title for each program d
 ---
 
 ### [findfrs.combinations.regions.count.jar (link to output)](https://github.com/vfdizon/find-frs-toolkit/blob/master/sample/output/findfrs.combinations.regions.count.csv)
-> This program counts the different prefixes found in names of genomes in different genome regions
-> There can be multiple prefixes to search for each group, and any prefixes that haven't been specified will be put in an "other" group.
+> This program counts the different prefixes found in names of genomes in different genome regions <br />
+> There can be multiple prefixes to search for each group, and any prefixes that haven't been specified will be put in an "other" group. 
 
 Example usage: 
 ```
@@ -46,7 +46,7 @@ Wrote to CSV: ..\sample\output\findfrs.combinations.regions.count.csv
 ```
 ---
 ### [findfrs.combinations.regions.presence.jar (link to output)](https://github.com/vfdizon/find-frs-toolkit/blob/master/sample/output/findfrs.combinations.regions.presence.csv)
-> Similar to findfrs.combinations.regions.count.jar, this looks for the different prefixes in different genome regions.
+> Similar to findfrs.combinations.regions.count.jar, this looks for the different prefixes in different genome regions. <br />
 > Instead of counting the groupings, this simply identifies the presence of a prefix within a given location, using a 1 or a 0, 1 being present and 0 being absent.
 
 Example usage: 
@@ -121,9 +121,9 @@ Parsed BED file in 392ms
 
 ---
 ### findfrs.regioncounts.jar [Link to Output 1](https://github.com/vfdizon/find-frs-toolkit/blob/master/sample/output/findfrs.regioncounts_regionCounts.csv), [Link to Output 2](https://github.com/vfdizon/find-frs-toolkit/blob/master/sample/output/findfrs.regioncounts_regionVariants.csv), [Link to Output 3](https://github.com/vfdizon/find-frs-toolkit/blob/master/sample/output/findfrs.regioncounts_regionVariantCounts.csv) 
-> This program exports 3 different csv files.
-> One csv file reveals the different regions present in the .bed file and their count
-> Another csv file reveals the variants (subregions) present in the .bed file
+> This program exports 3 different csv files. <br />
+> One csv file reveals the different regions present in the .bed file and their count <br />
+> Another csv file reveals the variants (subregions) present in the .bed file <br />
 > The last csv file reveals the count of the different variants (subregions) in the .bed file
 
 Example usage: 
@@ -142,10 +142,10 @@ Time taken: 497ms
 ```
 
 ### [findfrs.ranges.jar & findfrs.ranges.exe (Windows) & findfrs.ranges.linux64 (Linux 64) (link to output)](https://github.com/vfdizon/find-frs-toolkit/blob/master/sample/output/findfrs.ranges.csv)
-> This searches the given directory for .gff3 files, which are annotations for a bed file
-> This then concatenates the .bed file line and the line in the .gff3 file together in one line of the .csv output, if the start and end location are within any range in the .gff3 file
-> The .jar file is written in java, and the .exe/./linux64 executables are written in golang.
-> The java version is better suited for smaller datasets, while the golang version is better for larger datasets, and utilizes concurrency to search the .bed file for each .gff3 file.
+> This searches the given directory for .gff3 files, which are annotations for a bed file <br />
+> This then concatenates the .bed file line and the line in the .gff3 file together in one line of the .csv output, if the start and end location are within any range in the .gff3 file <br />
+> The .jar file is written in java, and the .exe/./linux64 executables are written in golang. <br />
+> The java version is better suited for smaller datasets, while the golang version is better for larger datasets, and utilizes concurrency to search the .bed file for each .gff3 file. <br />
 > The golang version also writes to the .csv file in batches as the program is running.
 
 Example usage (.jar):
