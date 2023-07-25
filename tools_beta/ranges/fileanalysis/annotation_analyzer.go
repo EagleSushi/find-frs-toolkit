@@ -12,6 +12,7 @@ type AnnotationAnalyzer struct {
 	Annotations *Annotations
 	BedFile     *BEDFile
 	CSVWriter   *CSVWriter
+	Verbose     bool
 }
 
 func (annotationAnalyzer *AnnotationAnalyzer) Analyze() {
@@ -34,7 +35,9 @@ func (annotationAnalyzer *AnnotationAnalyzer) Analyze() {
 	waitGroup.Wait()
 	close(writeChannel)
 
-	fmt.Println("Analyzed in", time.Since(startTime))
+	if annotationAnalyzer.Verbose {
+		fmt.Println("Analyzed in", time.Since(startTime))
+	}
 
 	annotationAnalyzer.CSVWriter.Close()
 }
@@ -44,7 +47,9 @@ func (annotationAnalyzer *AnnotationAnalyzer) checkForBEDFileEntries(writeChanne
 
 	defer waitGroup.Done()
 
-	fmt.Println("[goroutine] checkingForBEDfile entries for", name)
+	if annotationAnalyzer.Verbose {
+		fmt.Println("[goroutine] checkingForBEDfile started for", name)
+	}
 
 	for _, line := range annotationAnalyzer.BedFile.Lines {
 		respectiveAnnotation := annotationAnalyzer.Annotations.AnnotationFileFromName[name]
@@ -58,7 +63,9 @@ func (annotationAnalyzer *AnnotationAnalyzer) checkForBEDFileEntries(writeChanne
 		end, endError := strconv.Atoi(parsedLine[2])
 
 		if startError != nil || endError != nil {
-			fmt.Println("Error converting start or end to int. Start:", start, "End:", end)
+			if annotationAnalyzer.Verbose {
+				fmt.Println("Error converting start or end to int. Start:", start, "End:", end)
+			}
 			continue
 		}
 
@@ -74,7 +81,9 @@ func (annotationAnalyzer *AnnotationAnalyzer) checkForBEDFileEntries(writeChanne
 			annotationEnd, annotationEndError := strconv.Atoi(parsedAnnotationStartEnd[4])
 
 			if annotationStartError != nil || annotationEndError != nil {
-				fmt.Println("Error converting annotation start or end to int. Start:", annotationStart, "End:", annotationEnd)
+				if annotationAnalyzer.Verbose {
+					fmt.Println("Error converting annotation start or end to int. Start:", annotationStart, "End:", annotationEnd)
+				}
 				continue
 			}
 
@@ -86,6 +95,8 @@ func (annotationAnalyzer *AnnotationAnalyzer) checkForBEDFileEntries(writeChanne
 
 	}
 
-	fmt.Println("[goroutine] checkingForBEDfile done for", name, "in", time.Since(startTime))
+	if annotationAnalyzer.Verbose {
+		fmt.Println("[goroutine] checkingForBEDfile done for", name, "in", time.Since(startTime))
+	}
 
 }

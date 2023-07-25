@@ -12,14 +12,16 @@ import (
 type Annotations struct {
 	Directory              string
 	AnnotationFileFromName map[string]*AnnotationFile
+	Verbose                bool
 }
 
 func (annotations *Annotations) AddAllAnnotations(waitGroup *sync.WaitGroup) error {
 	defer waitGroup.Done()
-	defer fmt.Println("[goroutine] AddAllAnnotations done")
-
-	fmt.Println("[goroutine] AddAllAnnotations starting")
-	fmt.Print("\n")
+	if annotations.Verbose {
+		defer fmt.Println("[goroutine] AddAllAnnotations done")
+		fmt.Println("[goroutine] AddAllAnnotations starting")
+		fmt.Print("\n")
+	}
 
 	if annotations.Directory == "" {
 		return errors.New("no directory specified")
@@ -52,6 +54,7 @@ func (annotations *Annotations) addGff3Files(directory string, files []os.FileIn
 			filePath := filepath.Join(directory, fileName)
 			respectiveAnnotation := AnnotationFile{
 				FileName: filePath,
+				Verbose:  annotations.Verbose,
 			}
 			annotations.AnnotationFileFromName[nameOfAnnotation] = &respectiveAnnotation
 		}

@@ -12,6 +12,7 @@ import (
 type AnnotationFile struct {
 	LinesSet map[string]bool
 	FileName string
+	Verbose  bool
 }
 
 func (annotationFile *AnnotationFile) ReadLines() error {
@@ -36,7 +37,9 @@ func (annotationFile *AnnotationFile) ReadLines() error {
 	}
 	file.Close()
 
-	fmt.Println("Read Annotation File:", annotationFile.FileName, "in", time.Since(startTime))
+	if annotationFile.Verbose {
+		fmt.Println("Read Annotation File:", annotationFile.FileName, "in", time.Since(startTime))
+	}
 	return nil
 }
 

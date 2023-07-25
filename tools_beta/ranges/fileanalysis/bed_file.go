@@ -12,18 +12,23 @@ import (
 type BEDFile struct {
 	Lines    []string
 	FileName string
+	Verbose  bool
 }
 
 func (bedFile *BEDFile) ReadLines(waitGroup *sync.WaitGroup) error {
 	defer waitGroup.Done()
-	defer fmt.Println("[goroutine] ReadLines done")
+	if bedFile.Verbose {
+		defer fmt.Println("[goroutine] ReadLines done")
+	}
 
 	if bedFile.FileName == "" {
 		return errors.New("no .bed file specified")
 	}
 
-	fmt.Println("[goroutine] ReadLines starting")
-	fmt.Print("\n")
+	if bedFile.Verbose {
+		fmt.Println("[goroutine] ReadLines starting")
+		fmt.Print("\n")
+	}
 
 	bedFile.Lines = []string{}
 
@@ -37,7 +42,9 @@ func (bedFile *BEDFile) ReadLines(waitGroup *sync.WaitGroup) error {
 		bedFile.Lines = append(bedFile.Lines, fileScanner.Text())
 	}
 
-	fmt.Println("Read BED File in", time.Since(start))
+	if bedFile.Verbose {
+		fmt.Println("Read BED File in", time.Since(start))
+	}
 
 	file.Close()
 	return nil

@@ -1,36 +1,42 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"os"
+	"flag"
 	"strings"
 	"sync"
 
 	"github.com/vfdizon/ranges/fileanalysis"
 )
 
+var (
+	bedFilePathOption        string //i
+	annotationFilePathOption string //p
+	outputFilePathOption     string //o
+	verboseOption            bool   //verbose
+)
+
+func init() {
+	flag.StringVar(&bedFilePathOption, "i", "", "Path to the BED file")
+	flag.StringVar(&annotationFilePathOption, "p", "", "Path to the directory containing the GFF3 files")
+	flag.StringVar(&outputFilePathOption, "o", "", "Path to the output file")
+	flag.BoolVar(&verboseOption, "verbose", false, "Verbose output")
+}
+
 func main() {
+	flag.Parse()
+	bedFilePath := strings.TrimSpace(bedFilePathOption)
 
-	inputReader := bufio.NewReader(os.Stdin)
+	annotationDirectories := strings.TrimSpace(annotationFilePathOption)
 
-	fmt.Println("Please enter the .BED file path:")
-	bedFilePath, _ := inputReader.ReadString('\n')
-	bedFilePath = strings.TrimSpace(bedFilePath)
-
-	fmt.Println("Please enter the directory path for the .gff3 files:")
-	annotationDirectories, _ := inputReader.ReadString('\n')
-	annotationDirectories = strings.TrimSpace(annotationDirectories)
-
-	fmt.Println("Please enter the output file path: ( ending in .csv)")
-	outputFilePath, _ := inputReader.ReadString('\n')
-	outputFilePath = strings.TrimSpace(outputFilePath)
+	outputFilePath := strings.TrimSpace(outputFilePathOption)
 
 	annotations := fileanalysis.Annotations{
 		Directory: annotationDirectories,
+		Verbose:   verboseOption,
 	}
 	bedFile := fileanalysis.BEDFile{
 		FileName: bedFilePath,
+		Verbose:  verboseOption,
 	}
 	var waitGroup sync.WaitGroup
 	waitGroup.Add(2)
@@ -41,12 +47,14 @@ func main() {
 	waitGroup.Wait()
 	csvWriter := fileanalysis.CSVWriter{
 		FileName: outputFilePath,
+		Verbose:  verboseOption,
 	}
 
 	annotationAnalyzer := fileanalysis.AnnotationAnalyzer{
 		Annotations: &annotations,
 		CSVWriter:   &csvWriter,
 		BedFile:     &bedFile,
+		Verbose:     verboseOption,
 	}
 
 	annotationAnalyzer.Analyze()

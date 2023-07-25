@@ -13,6 +13,7 @@ type CSVWriter struct {
 	batchSize    int
 	writeBatch   []string
 	numOfBatches int
+	Verbose      bool
 }
 
 func (csvWriter *CSVWriter) CreateFile(header string) {
@@ -25,11 +26,12 @@ func (csvWriter *CSVWriter) CreateFile(header string) {
 	csvWriter.writer = bufio.NewWriter(file)
 
 	csvWriter.WriteLine(header)
-
-	fmt.Println("Created", csvWriter.FileName)
-	fmt.Print("\n")
-	fmt.Println("Writing to", csvWriter.FileName, "concurrently with a batch size of", csvWriter.batchSize, "lines each")
-	fmt.Print("\n")
+	if csvWriter.Verbose {
+		fmt.Println("Created", csvWriter.FileName)
+		fmt.Print("\n")
+		fmt.Println("Writing to", csvWriter.FileName, "concurrently with a batch size of", csvWriter.batchSize, "lines each")
+		fmt.Print("\n")
+	}
 }
 
 func (csvWriter *CSVWriter) WriteLine(line string) {
@@ -43,12 +45,16 @@ func (csvWriter *CSVWriter) flushBatch() {
 	for _, batchLine := range csvWriter.writeBatch {
 		_, err := csvWriter.writer.WriteString(batchLine + "\n")
 		if err != nil {
-			fmt.Println("Error writing line to file:", err)
+			if csvWriter.Verbose {
+				fmt.Println("Error writing line to file:", err)
+			}
 			return
 		}
 	}
 	csvWriter.numOfBatches++
-	fmt.Println("Wrote batch", csvWriter.numOfBatches, "to file")
+	if csvWriter.Verbose {
+		fmt.Println("Wrote batch", csvWriter.numOfBatches, "to file")
+	}
 	csvWriter.writer.Flush()
 	csvWriter.csvFile.Sync()
 	csvWriter.writeBatch = []string{}
@@ -56,8 +62,13 @@ func (csvWriter *CSVWriter) flushBatch() {
 }
 
 func (csvWriter *CSVWriter) Close() {
-	fmt.Println("Finished analysis, flushing remaining batch lines")
+	if csvWriter.Verbose {
+		fmt.Println("Finished analysis, flushing remaining batch lines")
+	}
 	csvWriter.flushBatch()
 	csvWriter.csvFile.Close()
-	fmt.Println("Closed", csvWriter.FileName)
+
+	if csvWriter.Verbose {
+		fmt.Println("Closed", csvWriter.FileName)
+	}
 }
