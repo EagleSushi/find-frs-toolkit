@@ -167,37 +167,18 @@ Finished analyzing .bed file in: 2390ms
 Wrote to CSV: ..\sample\output\findfrs.ranges.csv
 Finished in 5901 milliseconds.
 ```
-Example usage (.exe/linux64):
+Usage (.linux64):
 ```
-$ .\findfrs.ranges.exe
-Please enter the .BED file path:
-..\sample\data\sampleData.bed
-Please enter the directory path for the .gff3 files:
-..\sample\data
-Please enter the output file path: ( ending in .csv)
-..\sample\output\findfrs.ranges.csv
-[goroutine] ReadLines starting
-
-[goroutine] AddAllAnnotations starting
-
-Read BED File in 35.3038ms
-[goroutine] ReadLines done
-Read Annotation File: ..\sample\data\medtr.HM004.gnm1.ann1.2XTB.gene_models_main.gff3 in 488.7441ms
-Read Annotation File: ..\sample\data\medtr.HM010.gnm1.ann1.WV9J.gene_models_main.gff3 in 496.9368ms
-[goroutine] AddAllAnnotations done
-Created..\sample\output\findfrs.ranges.csv
-
-Writing to ..\sample\output\findfrs.ranges.csv concurrently with a batch size of 1000000 lines each
-
-[goroutine] checkingForBEDfile entries for medtr.HM010
-[goroutine] checkingForBEDfile entries for medtr.HM004
-[goroutine] checkingForBEDfile done for medtr.HM004 in 54.0884893s
-[goroutine] checkingForBEDfile done for medtr.HM010 in 1m7.9875196s
-Analyzed in 1m7.9943434s
-Finished analysis, flushing remaining batch lines
-Wrote batch 1 to file
-Closed ..\sample\output\findfrs.ranges.csv
+  -i string
+    	Path to the BED file
+  -o string
+    	Path to the output file
+  -p string
+    	Path to the directory containing the GFF3 files
+  -verbose
+    	Verbose output
 ```
+
 
 ---
 
